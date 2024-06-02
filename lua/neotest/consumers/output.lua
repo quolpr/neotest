@@ -25,6 +25,7 @@ local function open_output(result, opts)
   vim.api.nvim_buf_set_option(buf, "modifiable", true)
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, {})
   vim.api.nvim_buf_set_option(buf, "modifiable", false)
+  vim.api.nvim_buf_set_option(buf, "wrap", true)
 
   nio.sleep(10) -- Wait for chan to send
   nio.api.nvim_create_autocmd("TermEnter", {
@@ -123,7 +124,7 @@ local init = function()
         then
           open_output(
             results[pos.id],
-            { short = config.output.open_on_run == "short", enter = false, quiet = true }
+            { short = config.output.open_on_run == "short", enter = true, quiet = true }
           )
         end
       end
