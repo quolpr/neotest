@@ -25,7 +25,6 @@ local function open_output(result, opts)
   vim.api.nvim_buf_set_option(buf, "modifiable", true)
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, {})
   vim.api.nvim_buf_set_option(buf, "modifiable", false)
-  vim.api.nvim_buf_set_option(buf, "wrap", true)
 
   nio.sleep(10) -- Wait for chan to send
   nio.api.nvim_create_autocmd("TermEnter", {
@@ -85,6 +84,9 @@ local function open_output(result, opts)
   end
 
   vim.api.nvim_buf_set_option(buf, "filetype", "neotest-output")
+  vim.api.nvim_buf_set_option(buf, "wrap", true)
+  vim.api.nvim_buf_set_option(buf, "breakindent", true)
+  vim.api.nvim_buf_set_option(buf, "linebreak", true)
 end
 
 local neotest = {}
@@ -115,13 +117,7 @@ local init = function()
       for _, node in positions:iter_nodes() do
         local pos = node:data()
         local range = node:closest_value_for("range")
-        if
-          pos.type == "test"
-          and results[pos.id]
-          and results[pos.id].status == "failed"
-          and range[1] <= line
-          and range[3] >= line
-        then
+        if pos.type == "test" and results[pos.id] and range[1] <= line and range[3] >= line then
           open_output(
             results[pos.id],
             { short = config.output.open_on_run == "short", enter = true, quiet = true }
